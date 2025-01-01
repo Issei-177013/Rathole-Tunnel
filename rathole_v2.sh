@@ -282,8 +282,8 @@ fi
     echo
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
-        1) iran_server_configuration ;;
-        2) kharej_server_configuration ;;
+        1) Origin_server_configuration ;;
+        2) Destination_server_configuration ;;
         *) echo -e "${RED}Invalid option!${NC}" && sleep 1 ;;
     esac
     echo
@@ -294,10 +294,10 @@ fi
 #Global Variables
 service_dir="/etc/systemd/system"
   
-# Function to configure Iran server
-iran_server_configuration() {  
+# Function to configure origin server
+origin_server_configuration() {  
     clear
-    colorize cyan "Configuring IRAN server" bold
+    colorize cyan "Configuring origin server" bold
     
     echo
     
@@ -419,7 +419,7 @@ iran_server_configuration() {
 	
 	
     # Generate server configuration file
-    cat << EOF > "${config_dir}/iran${tunnel_port}.toml"
+    cat << EOF > "${config_dir}/origin${tunnel_port}.toml"
 [server]
 bind_addr = "${local_ip}:${tunnel_port}"
 default_token = "$token"
@@ -435,7 +435,7 @@ EOF
 
     # Add each config port to the configuration file
     for port in "${config_ports[@]}"; do
-        cat << EOF >> "${config_dir}/iran${tunnel_port}.toml"
+        cat << EOF >> "${config_dir}/origin${tunnel_port}.toml"
 [server.services.${port}]
 type = "$transport"
 bind_addr = "${local_ip}:${port}"
@@ -446,14 +446,14 @@ EOF
     echo 
 
     # Create the systemd service unit file
-    cat << EOF > "${service_dir}/rathole-iran${tunnel_port}.service"
+    cat << EOF > "${service_dir}/rathole-origin${tunnel_port}.service"
 [Unit]
-Description=Rathole Iran Port $tunnel_port (Iran)
+Description=Rathole origin Port $tunnel_port (origin)
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=${config_dir}/rathole ${config_dir}/iran${tunnel_port}.toml
+ExecStart=${config_dir}/rathole ${config_dir}/origin${tunnel_port}.toml
 Restart=always
 RestartSec=3
 
@@ -465,27 +465,27 @@ EOF
     systemctl daemon-reload >/dev/null 2>&1
 
     # Enable and start the service to start on boot
-    if systemctl enable --now "${service_dir}/rathole-iran${tunnel_port}.service" >/dev/null 2>&1; then
-        colorize green "Iran service with port $tunnel_port enabled to start on boot and started."
+    if systemctl enable --now "${service_dir}/rathole-origin${tunnel_port}.service" >/dev/null 2>&1; then
+        colorize green "origin service with port $tunnel_port enabled to start on boot and started."
     else
         colorize red "Failed to enable service with port $tunnel_port. Please check your system configuration."
         return 1
     fi
      
     echo
-    colorize green "IRAN server configuration completed successfully."
+    colorize green "origin server configuration completed successfully."
 }
 
-#Function for configuring Kharej server
-kharej_server_configuration() {
+#Function for configuring destination server
+destination_server_configuration() {
     clear
-    colorize cyan "Configuring kharej server" bold 
+    colorize cyan "Configuring destination server" bold 
     
     echo
  
-	# Prompt for IRAN server IP address
+	# Prompt for origin server IP address
 	while true; do
-	    echo -ne "[*] IRAN server IP address [IPv4/IPv6]: " 
+	    echo -ne "[*] origin server IP address [IPv4/IPv6]: " 
 	    read -r SERVER_ADDR
 	    if [[ -n "$SERVER_ADDR" ]]; then
 	        break
@@ -608,7 +608,7 @@ kharej_server_configuration() {
 	fi
 
     # Generate server configuration file
-    cat << EOF > "${config_dir}/kharej${tunnel_port}.toml"
+    cat << EOF > "${config_dir}/destination${tunnel_port}.toml"
 [client]
 remote_addr = "${SERVER_ADDR}:${tunnel_port}"
 default_token = "$token"
@@ -625,7 +625,7 @@ EOF
 
     # Add each config port to the configuration file
     for port in "${config_ports[@]}"; do
-        cat << EOF >> "${config_dir}/kharej${tunnel_port}.toml"
+        cat << EOF >> "${config_dir}/destination${tunnel_port}.toml"
 [client.services.${port}]
 type = "$transport"
 local_addr = "${local_ip}:${port}"
@@ -636,14 +636,14 @@ EOF
     echo
 
     # Create the systemd service unit file
-    cat << EOF > "${service_dir}/rathole-kharej${tunnel_port}.service"
+    cat << EOF > "${service_dir}/rathole-destination${tunnel_port}.service"
 [Unit]
-Description=Rathole Kharej Port $tunnel_port 
+Description=Rathole destination Port $tunnel_port 
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=${config_dir}/rathole ${config_dir}/kharej${tunnel_port}.toml
+ExecStart=${config_dir}/rathole ${config_dir}/destination${tunnel_port}.toml
 Restart=always
 RestartSec=3
 
@@ -655,15 +655,15 @@ EOF
     systemctl daemon-reload >/dev/null 2>&1
 
     # Enable and start the service to start on boot
-    if systemctl enable --now "${service_dir}/rathole-kharej${tunnel_port}.service" >/dev/null 2>&1; then
-        colorize green "Kharej service with port $tunnel_port enabled to start on boot and started."
+    if systemctl enable --now "${service_dir}/rathole-destination${tunnel_port}.service" >/dev/null 2>&1; then
+        colorize green "destination service with port $tunnel_port enabled to start on boot and started."
     else
         colorize red "Failed to enable service with port $tunnel_port. Please check your system configuration."
         return 1
     fi
 
     echo
-    colorize green "Kharej server configuration completed successfully."
+    colorize green "destination server configuration completed successfully."
 }
 
 
@@ -683,36 +683,36 @@ check_tunnel_status() {
     colorize yellow "Checking all services status..." bold
     sleep 1
     echo
-    for config_path in "$config_dir"/iran*.toml; do
+    for config_path in "$config_dir"/origin*.toml; do
         if [ -f "$config_path" ]; then
             # Extract config_name without directory path and change it to service name
 			config_name=$(basename "$config_path")
 			config_name="${config_name%.toml}"
 			service_name="rathole-${config_name}.service"
-            config_port="${config_name#iran}"
+            config_port="${config_name#origin}"
             
-			# Check if the rathole-client-kharej service is active
+			# Check if the rathole-client-destination service is active
 			if systemctl is-active --quiet "$service_name"; then
-				colorize green "Iran service with tunnel port $config_port is running"
+				colorize green "origin service with tunnel port $config_port is running"
 			else
-				colorize red "Iran service with tunnel port $config_port is not running"
+				colorize red "origin service with tunnel port $config_port is not running"
 			fi
    		fi
     done
     
-    for config_path in "$config_dir"/kharej*.toml; do
+    for config_path in "$config_dir"/destination*.toml; do
         if [ -f "$config_path" ]; then
             # Extract config_name without directory path and change it to service name
 			config_name=$(basename "$config_path")
 			config_name="${config_name%.toml}"
 			service_name="rathole-${config_name}.service"
-            config_port="${config_name#kharej}"
+            config_port="${config_name#destination}"
             
-			# Check if the rathole-client-kharej service is active
+			# Check if the rathole-client-destination service is active
 			if systemctl is-active --quiet "$service_name"; then
-				colorize green "Kharej service with tunnel port $config_port is running"
+				colorize green "destination service with tunnel port $config_port is running"
 			else
-				colorize red "Kharej service with tunnel port $config_port is not running"
+				colorize red "destination service with tunnel port $config_port is not running"
 			fi
    		fi
     done
@@ -742,34 +742,34 @@ tunnel_management() {
     local index=1
     declare -a configs
 
-    for config_path in "$config_dir"/iran*.toml; do
+    for config_path in "$config_dir"/origin*.toml; do
         if [ -f "$config_path" ]; then
             # Extract config_name without directory path
             config_name=$(basename "$config_path")
             
-            # Remove "iran" prefix and ".toml" suffix
-            config_port="${config_name#iran}"
+            # Remove "origin" prefix and ".toml" suffix
+            config_port="${config_name#origin}"
             config_port="${config_port%.toml}"
             
             configs+=("$config_path")
-            echo -e "${MAGENTA}${index}${NC}) ${GREEN}Iran${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
+            echo -e "${MAGENTA}${index}${NC}) ${GREEN}origin${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
             ((index++))
         fi
     done
     
 
     
-    for config_path in "$config_dir"/kharej*.toml; do
+    for config_path in "$config_dir"/destination*.toml; do
         if [ -f "$config_path" ]; then
             # Extract config_name without directory path
             config_name=$(basename "$config_path")
             
-            # Remove "kharej" prefix and ".toml" suffix
-            config_port="${config_name#kharej}"
+            # Remove "destination" prefix and ".toml" suffix
+            config_port="${config_name#destination}"
             config_port="${config_port%.toml}"
             
             configs+=("$config_path")
-            echo -e "${MAGENTA}${index}${NC}) ${GREEN}Kharej${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
+            echo -e "${MAGENTA}${index}${NC}) ${GREEN}destination${NC} service, Tunnel port: ${YELLOW}$config_port${NC}"
             ((index++))
         fi
     done
@@ -1007,7 +1007,7 @@ add_new_config(){
 	
 	echo
 	
-	if grep -q "iran" <<< "$config_path"; then
+	if grep -q "origin" <<< "$config_path"; then
 	# Add each config port to the configuration file
     for port in "${config_ports[@]}"; do
         cat << EOF >> "$config_path"
