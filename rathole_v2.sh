@@ -282,8 +282,8 @@ fi
     echo
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
-        1) Origin_server_configuration ;;
-        2) Destination_server_configuration ;;
+        1) origin_server_configuration ;;
+        2) destination_server_configuration ;;
         *) echo -e "${RED}Invalid option!${NC}" && sleep 1 ;;
     esac
     echo
