@@ -150,7 +150,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/Hesam/rathole-tunnel/raw/main/core/rathole.zip'
+    	DOWNLOAD_URL='https://github.com/Issei-177013/rathole-tunnel/raw/main/core/rathole.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -1127,7 +1127,7 @@ update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
 RATHOLE_SCRIPT="rathole"
-SCRIPT_URL="https://github.com/Hesam/rathole-tunnel/raw/main/rathole_v2.sh"
+SCRIPT_URL="https://github.com/Issei-177013/rathole-tunnel/raw/main/rathole_v2.sh"
 
 echo
 # Check if rathole.sh exists in /bin/bash
@@ -1558,7 +1558,7 @@ read -p "Press Enter to continue..."
 
 install_modified_core(){
 	echo
-	DOWNLOAD_URL='https://github.com/Hesam/rathole-tunnel/raw/main/core/rathole_modified.zip'
+	DOWNLOAD_URL='https://github.com/Issei-177013/rathole-tunnel/raw/main/core/rathole_modified.zip'
 	
 	if [ -z "$DOWNLOAD_URL" ]; then
         echo -e "${RED}Failed to retrieve download URL.${NC}"
