@@ -277,8 +277,8 @@ fi
     colorize yellow "   Enable TCP_NODELAY to improve the latency but decrease the bandwidth.
    For the high number of connections, I recommend turning off the Heartbeat option" 
     echo
-    colorize green "1) Configure for IRAN server" bold
-    colorize magenta "2) Configure for KHAREJ server" bold
+    colorize green "1) Configure for Origin server" bold
+    colorize magenta "2) Configure for Destination server" bold
     echo
     read -p "Enter your choice: " configure_choice
     case "$configure_choice" in
