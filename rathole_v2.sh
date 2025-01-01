@@ -150,7 +150,7 @@ download_and_extract_rathole() {
         exit 1
     fi
     if [[ "$ARCH" == "x86_64" ]]; then
-    	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/core/rathole.zip'
+    	DOWNLOAD_URL='https://github.com/Hesam/rathole-tunnel/raw/main/core/rathole.zip'
     fi
 
     if [ -z "$DOWNLOAD_URL" ]; then
@@ -196,9 +196,8 @@ ____________ _/  |_|  |__   ____ |  |   ____
             \/          \/                 \/ 	
 EOF
     echo -e "${NC}${GREEN}"
-    echo -e "Version: ${YELLOW}v2.0${GREEN}"
-    echo -e "Github: ${YELLOW}github.com/Musixal/Rathole-Tunnel${GREEN}"
-    echo -e "Telegram Channel: ${YELLOW}@Gozar_Xray${NC}"
+    echo -e "By: ${YELLOW}Hesam Mahmoodi${GREEN}"
+    echo -e "${YELLOW}Esfarayen University of Technology and Engineering${NC}"
 }
 
 # Function to display server location and IP
@@ -385,7 +384,7 @@ iran_server_configuration() {
 	echo -ne "[-] Security Token (press enter to use default value): "
 	read -r token
 	if [[ -z "$token" ]]; then
-		token="musixal"
+		token="hesam"
 	fi
 
 	echo 
@@ -564,7 +563,7 @@ kharej_server_configuration() {
 	echo -ne "[-] Security Token (press enter to use default value): "
 	read -r token
 	if [[ -z "$token" ]]; then
-		token="musixal"
+		token="hesam"
 	fi
 
 	echo
@@ -1128,7 +1127,7 @@ update_script(){
 # Define the destination path
 DEST_DIR="/usr/bin/"
 RATHOLE_SCRIPT="rathole"
-SCRIPT_URL="https://github.com/Musixal/rathole-tunnel/raw/main/rathole_v2.sh"
+SCRIPT_URL="https://github.com/Hesam/rathole-tunnel/raw/main/rathole_v2.sh"
 
 echo
 # Check if rathole.sh exists in /bin/bash
@@ -1559,7 +1558,7 @@ read -p "Press Enter to continue..."
 
 install_modified_core(){
 	echo
-	DOWNLOAD_URL='https://github.com/Musixal/rathole-tunnel/raw/main/core/rathole_modified.zip'
+	DOWNLOAD_URL='https://github.com/Hesam/rathole-tunnel/raw/main/core/rathole_modified.zip'
 	
 	if [ -z "$DOWNLOAD_URL" ]; then
         echo -e "${RED}Failed to retrieve download URL.${NC}"
